@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Absensi Mahasiswa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-16">
+
+  <!-- Header -->
+  <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-10">
+    <div class="max-w-lg mx-auto px-4 py-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-lg font-bold tracking-wide">E-Absensi Mahasiswa</h1>
+        <p id="currentDate" class="text-xs text-indigo-200"></p>
+      </div>
+      <span class="bg-indigo-500 text-xs font-semibold px-2.5 py-1 rounded-full">
+        Mobile Ready
+      </span>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 pt-5 space-y-5">
+
+    <!-- Ringkasan Statistik -->
+    <section class="grid grid-cols-4 gap-2 text-center">
+      <div class="bg-white p-2.5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-[11px] text-slate-500 font-medium">Hadir</p>
+        <p id="statHadir" class="text-lg font-bold text-emerald-600">0</p>
+      </div>
+      <div class="bg-white p-2.5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-[11px] text-slate-500 font-medium">Izin</p>
+        <p id="statIzin" class="text-lg font-bold text-blue-600">0</p>
+      </div>
+      <div class="bg-white p-2.5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-[11px] text-slate-500 font-medium">Sakit</p>
+        <p id="statSakit" class="text-lg font-bold text-amber-500">0</p>
+      </div>
+      <div class="bg-white p-2.5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-[11px] text-slate-500 font-medium">Alpha</p>
+        <p id="statAlpha" class="text-lg font-bold text-rose-600">0</p>
+      </div>
+    </section>
+
+    <!-- Form Absensi -->
+    <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+      <h2 class="text-sm font-bold text-slate-700 mb-3">Form Isi Kehadiran</h2>
+      <form id="absenForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Nama Mahasiswa</label>
+          <input type="text" id="nama" required placeholder="Contoh: Budi Santoso"
+            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">NIM</label>
+            <input type="text" id="nim" required placeholder="Contoh: 21010045"
+              class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Mata Kuliah</label>
+            <input type="text" id="matkul" required placeholder="Pemrograman Web"
+              class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Status Kehadiran</label>
+          <div class="grid grid-cols-4 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Hadir" class="peer sr-only" checked />
+              <div class="text-center text-xs py-2 rounded-lg border border-slate-300 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 font-medium transition">
+                Hadir
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Izin" class="peer sr-only" />
+              <div class="text-center text-xs py-2 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 font-medium transition">
+                Izin
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Sakit" class="peer sr-only" />
+              <div class="text-center text-xs py-2 rounded-lg border border-slate-300 peer-checked:bg-amber-500 peer-checked:text-white peer-checked:border-amber-500 font-medium transition">
+                Sakit
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Alpha" class="peer sr-only" />
+              <div class="text-center text-xs py-2 rounded-lg border border-slate-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 font-medium transition">
+                Alpha
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-semibold text-sm py-2.5 rounded-lg shadow transition">
+          + Simpan Absensi
+        </button>
+      </form>
+    </section>
+
+    <!-- Daftar Kehadiran -->
+    <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+      <div class="flex justify-between items-center">
+        <h2 class="text-sm font-bold text-slate-700">Riwayat Absen (<span id="totalCount">0</span>)</h2>
+        <div class="flex gap-2">
+          <button onclick="exportCSV()"
+            class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg font-medium hover:bg-emerald-100">
+            Unduh CSV
+          </button>
+          <button onclick="hapusSemua()"
+            class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-2.5 py-1 rounded-lg font-medium hover:bg-rose-100">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Pencarian & Filter -->
+      <div class="flex gap-2">
+        <input type="text" id="searchInput" oninput="renderData()" placeholder="Cari nama atau NIM..."
+          class="flex-1 px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <select id="filterStatus" onchange="renderData()"
+          class="px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="Semua">Semua</option>
+          <option value="Hadir">Hadir</option>
+          <option value="Izin">Izin</option>
+          <option value="Sakit">Sakit</option>
+          <option value="Alpha">Alpha</option>
+        </select>
+      </div>
+
+      <!-- List Container -->
+      <div id="absenList" class="divide-y divide-slate-100 max-h-96 overflow-y-auto">
+        <!-- Data dirender via JavaScript -->
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'data_absensi_mahasiswa_v1';
+    let dataAbsensi = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    // Tampilkan tanggal hari ini di header
+    const optionsTanggal = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', optionsTanggal);
+
+    // Simpan ke localStorage
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAbsensi));
+      renderData();
+    }
+
+    // Tambah data absen
+    document.getElementById('absenForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const nama = document.getElementById('nama').value.trim();
+      const nim = document.getElementById('nim').value.trim();
+      const matkul = document.getElementById('matkul').value.trim();
+      const status = document.querySelector('input[name="status"]:checked').value;
+
+      const sekarang = new Date();
+      const waktu = sekarang.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const tanggal = sekarang.toLocaleDateString('id-ID');
+
+      dataAbsensi.unshift({
+        id: Date.now(),
+        nama,
+        nim,
+        matkul,
+        status,
+        waktu,
+        tanggal
+      });
+
+      saveData();
+      document.getElementById('nama').value = '';
+      document.getElementById('nim').value = '';
+    });
+
+    // Hapus satu data
+    function hapusItem(id) {
+      dataAbsensi = dataAbsensi.filter(item => item.id !== id);
+      saveData();
+    }
+
+    // Hapus semua data
+    function hapusSemua() {
+      if (dataAbsensi.length === 0) return;
+      if (confirm('Yakin ingin menghapus seluruh riwayat absensi?')) {
+        dataAbsensi = [];
+        saveData();
+      }
+    }
+
+    // Warna badge status
+    function getBadgeClass(status) {
+      switch (status) {
+        case 'Hadir': return 'bg-emerald-100 text-emerald-700';
+        case 'Izin':  return 'bg-blue-100 text-blue-700';
+        case 'Sakit': return 'bg-amber-100 text-amber-700';
+        case 'Alpha': return 'bg-rose-100 text-rose-700';
+        default:      return 'bg-slate-100 text-slate-700';
+      }
+    }
+
+    // Render statistik dan daftar
+    function renderData() {
+      // Update statistik
+      document.getElementById('statHadir').textContent = dataAbsensi.filter(d => d.status === 'Hadir').length;
+      document.getElementById('statIzin').textContent  = dataAbsensi.filter(d => d.status === 'Izin').length;
+      document.getElementById('statSakit').textContent = dataAbsensi.filter(d => d.status === 'Sakit').length;
+      document.getElementById('statAlpha').textContent = dataAbsensi.filter(d => d.status === 'Alpha').length;
+
+      const keyword = document.getElementById('searchInput').value.toLowerCase();
+      const filterStatus = document.getElementById('filterStatus').value;
+
+      const filtered = dataAbsensi.filter(item => {
+        const matchText = item.nama.toLowerCase().includes(keyword) || item.nim.toLowerCase().includes(keyword);
+        const matchStatus = filterStatus === 'Semua' || item.status === filterStatus;
+        return matchText && matchStatus;
+      });
+
+      document.getElementById('totalCount').textContent = filtered.length;
+      const listEl = document.getElementById('absenList');
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<p class="text-center text-xs text-slate-400 py-8">Belum ada data absensi.</p>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(item => `
+        <div class="py-3 flex justify-between items-center gap-2">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-slate-800 truncate">${item.nama}</p>
+            <p class="text-xs text-slate-500">NIM: ${item.nim} • ${item.matkul}</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">${item.tanggal}, ${item.waktu} WIB</p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${getBadgeClass(item.status)}">
+              ${item.status}
+            </span>
+            <button onclick="hapusItem(${item.id})" title="Hapus"
+              class="text-slate-400 hover:text-rose-600 p-1 text-sm font-bold">
+              ✕
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Export ke CSV (bisa dibuka di Excel)
+    function exportCSV() {
+      if (dataAbsensi.length === 0) {
+        alert('Tidak ada data untuk diunduh.');
+        return;
+      }
+      const header = ['Nama,NIM,Mata Kuliah,Status,Tanggal,Waktu'];
+      const rows = dataAbsensi.map(d =>
+        `"${d.nama}","${d.nim}","${d.matkul}","${d.status}","${d.tanggal}","${d.waktu}"`
+      );
+      const csvContent = 'data:text/csv;charset=utf-8,' + [header, ...rows].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `absensi_mahasiswa_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Jalankan saat halaman dibuka
+    renderData();
+  </script>
+</body>
+</html>
